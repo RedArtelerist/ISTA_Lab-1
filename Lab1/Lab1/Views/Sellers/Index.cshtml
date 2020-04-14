@@ -1,0 +1,173 @@
+﻿@model Lab1.Data.SellerIndexData
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Sellers";
+}
+
+<h2>Sellers</h2>
+
+@if (User.Identity.IsAuthenticated)
+{
+    var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+    if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+    {
+        <p>
+            <a asp-action="Create">Create New</a> |
+            <a asp-controller="Home" asp-action="Index">Home</a>
+        </p>
+    }
+    else
+    {
+        <a asp-controller="Home" asp-action="Index">Home</a>
+    }
+}
+else
+{
+    <a asp-controller="Home" asp-action="Index">Home</a>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a>
+            </th>
+            <th>Adress</th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RatingSortParm"]">Rating</a>
+            </th>
+            <th>Products</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Sellers)
+        {
+            string selectedRow = "";
+            if (item.Id == (int?)ViewData["SellerId"])
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Adress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @{
+                        foreach (var product in item.SellerProducts.OrderBy(a => a.Product.Name))
+                        {
+                            @product.Product.Name <br />
+                        }
+                    }
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                        if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+                        {
+                            <p>
+                                <a asp-action="Index" asp-route-id="@item.Id">Select</a> |
+                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </p>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" asp-route-id="@item.Id">Select</a> 
+                        }
+                    }
+                    else
+                    {
+                        <a asp-action="Index" asp-route-id="@item.Id">Select</a> 
+                    }
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Products != null)
+{
+    <h3>Products Taught by Selected Seller</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Info</th>
+            <th>Specification</th>
+            <th>Rating</th>
+            <th>Subcategory</th>
+        </tr>
+
+        @foreach (var item in Model.Products)
+        {
+            string selectedRow = "";
+            if (item.Id == (int?)ViewData["ProductId"])
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.ActionLink("Select", "Index", new { productId = item.Id })
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Info
+                </td>
+                <td>
+                    @item.Specification
+                </td>
+                <td>
+                    @item.Rating
+                </td>
+
+                <td>
+                    @item.Subcategory.Name
+                </td>
+            </tr>
+        }
+    </table>
+}
+@if (Model.Reviews != null)
+{
+    <h3>
+        Reviews by selected Product
+    </h3>
+    <table class="table">
+        <tr>
+            <th>Info</th>
+            <th>Date</th>
+            <th>Rating</th>
+            <th>UserName</th>
+        </tr>
+        @foreach (var item in Model.Reviews)
+        {
+            <tr>
+                <td>
+                    @item.Info
+                </td>
+                <td>
+                    @item.Date
+                </td>
+                <td>
+                    @item.Rating
+                </td>
+                <td>
+                    @item.UserName
+                </td>
+            </tr>
+        }
+    </table>
+}
+

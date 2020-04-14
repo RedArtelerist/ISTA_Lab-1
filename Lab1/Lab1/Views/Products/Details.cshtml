@@ -1,0 +1,79 @@
+﻿@model Lab1.Models.Product
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Info)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Info)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Specification)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Specification)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Rating)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Rating)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Subcategory)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Subcategory.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SellerProducts)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Adress</th>
+                    <th>Rating</th>
+
+                </tr>
+                @foreach (var item in Model.SellerProducts)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Seller.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Seller.Adress)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Seller.Rating)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" asp-route-num="@ViewBag.Num" asp-route-searchString="@ViewBag.SearchString">Edit</a> |
+    @if (ViewBag.Num == 0) {
+        <a asp-action="Index" asp-route-id="@Model.SubcategoryId" asp-route-name="@Model.Subcategory.Name" asp-route-searchString="@ViewBag.SearchString">Back to List</a>}
+    else { 
+        <a asp-action="Index1" asp-route-searchString="@ViewBag.SearchString">Back to List</a>}
+
+</div>

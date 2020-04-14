@@ -1,0 +1,159 @@
+﻿@model IEnumerable<Lab1.Models.Subcategory>
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Subcategories";
+}
+
+@if (ViewBag.FormatError != "")
+{
+    <h4 style="color:red">@ViewBag.FormatError</h4>
+}
+@if (ViewBag.FieldError != "")
+{
+    <h4 style="color:red">@ViewBag.FieldError</h4>
+    ViewBag.FieldError = "";
+}
+@if (ViewBag.ValueError != "")
+{
+    <h4 style="color:red">@ViewBag.ValueError</h4>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+    if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+    {
+        <div>
+            <h3 style="color:coral">Оберіть exel-файл для завантаження</h3>
+            @using (Html.BeginForm("Import", "Subcategories", new { categoryId = @ViewBag.CategoryId }, FormMethod.Post, null, new { enctype = "multipart/form-data", id = "frm-excel" }))
+            {
+                <div class="fl_sz">
+                    Завантажте excel-файл (.xlsx):
+
+                    <div class="fl_upld">
+                        <label><input id="fl_inp" type="file" name="fileExcel" />Оберіть файл</label>
+                        <div id="fl_nm">Файл не обрано</div>
+                    </div>
+                    <div class="fl_save">
+                        <label><input id="fl_sbmt" type="submit" value="Завантажити" />Завантажити</label>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+}
+
+
+@using (Html.BeginForm("Export", "Subcategories", new { categoryId = @ViewBag.CategoryId }, FormMethod.Post))
+{
+    <h1></h1>
+    <h1>Subcategories in Category: @ViewBag.CategoryName</h1>
+    @if (User.Identity.IsAuthenticated)
+    {
+        var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+        if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+        {
+            <p>
+                @Html.ActionLink("Create new", "Create", new { categoryId = @ViewBag.CategoryId }) |
+                @Html.ActionLink("Back to list", "Index", "Categories")
+            </p>
+        }
+        else
+        {
+            @Html.ActionLink("Back to list", "Index", "Categories")
+
+        }
+    }
+    else
+    {
+        @Html.ActionLink("Back to list", "Index", "Categories")
+    }
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Category)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                            if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+                            {
+                                <input type="checkbox" name="subcats" id="@item.Name" value="@item.Id" />
+                            }
+                        }
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.Name)
+                    </td>
+                    <td>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                            if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+                            {
+                                <p>
+                                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                    <a asp-action="Details" asp-route-id="@item.Id">Products</a> |
+                                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                </p>
+                            }
+                            else
+                            {
+                                <a asp-action="Details" asp-route-id="@item.Id">Products</a>
+                            }
+                        }
+                        else
+                        {
+                            <a asp-action="Details" asp-route-id="@item.Id">Products</a>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+        if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+        {
+            <h3 style="color:coral">Завантаження інформації в файл</h3>
+
+            <div class="fl_save">
+                <label><input id="fl_sbmt" type="submit" value="Завантажити" />Завантажити</label>
+            </div>
+        }
+    }
+
+
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#fl_inp").change(function () {
+            var filename = $(this).val().replace(/.*\\/, "");
+            $("#fl_nm").html(filename);
+            if (filename == "") $("#fl_nm").html("Файл не обрано");
+
+        });
+    });
+</script>

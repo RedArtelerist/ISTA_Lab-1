@@ -1,0 +1,38 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Lab1.ViewModels.ChangeRoleViewModel
+
+<h2>Change user roles for @Model.UserEmail</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="userId" value="@Model.UserId" />
+    <div class="form-group">
+        @foreach (IdentityRole role in Model.AllRoles)
+        {
+            if (role.Name != "creator")
+            {
+                
+                List<string> roles = ViewBag.UserRoles;
+                if(roles.Contains("creator"))
+                {
+                    <input type="checkbox" name="roles" value="@role.Name"
+                            @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
+                }
+                if (!roles.Contains("creator") && roles.Contains("admin"))
+                {
+                    if (role.Name != "admin")
+                    {
+                        <input type="checkbox" name="roles" value="@role.Name"
+                                @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
+                    }
+                }
+
+            }
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<form asp-action="UserList" method="post">
+    <button type="submit" class="btn btn-primary">Back</button>
+</form>
+

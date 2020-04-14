@@ -1,0 +1,34 @@
+﻿@model Lab1.ViewModels.CreateUserViewModel
+@{
+    ViewData["Title"] = "Add user";
+}
+
+<h1>Add user</h1>
+
+<form method="post" asp-action="Create" asp-controller="Users">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div>
+        <label asp-for="Email"></label><br />
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label asp-for="Nick"></label><br />
+        <input asp-for="Nick" />
+        <span asp-validation-for="Nick"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label><br />
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <p></p>
+    <div class="form-group">
+        <input type="submit" value="Add" class="btn btn-outline-secondary" />
+    </div>
+</form>
+<form asp-action="Index" asp-controller="Users">
+    <div class="form-group">
+        <input type="submit" value="Back" class="btn btn-outline-secondary" />
+    </div>
+</form>

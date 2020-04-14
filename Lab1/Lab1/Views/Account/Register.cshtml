@@ -1,0 +1,33 @@
+﻿@model Lab1.ViewModels.RegisterViewModel
+<h2>Registration new user</h2>
+<form method="post" asp-controller="Account" asp-action="Register">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div>
+        <label asp-for="Email"></label><br />
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label asp-for="Nick"></label><br />
+        <input asp-for="Nick" />
+        <span asp-validation-for="Nick"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label><br />
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="PasswordConfirm"></label><br />
+        <input asp-for="PasswordConfirm" />
+        <span asp-validation-for="PasswordConfirm"></span>
+    </div>
+    <p></p>
+    <div class="fl_save">
+        <label><input id="fl_sbmt" type="submit" value="Registration" />Registration</label>
+    </div>
+</form>
+
+<p>
+    @Html.ActionLink("Back to Home", "Index", "Home")
+</p>

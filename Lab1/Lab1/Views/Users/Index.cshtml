@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Lab1.Models.User>
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+
+@{
+    ViewData["Title"] = "List of users";
+}
+@if (((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("admin") ||
+  ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("moderator") ||
+  ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("creator"))
+{
+    <h1>List of users</h1>
+}
+else
+{
+    <h1>My Cabinet</h1>
+}
+@if (((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("admin") ||
+  ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("moderator") ||
+  ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("creator"))
+{
+    <a asp-action="Create">Add user</a>
+}
+@if (((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("admin") ||
+((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("moderator") ||
+((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).Contains("creator"))
+{
+    <table class="table">
+        <tr><th>Email</th><th>Nick</th><th></th></tr>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.Nick</td>
+
+                <td>
+                    <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                        @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
+                        {
+                            <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                            <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">Change password</a>
+                        }
+                        @if (User.FindFirstValue(ClaimTypes.NameIdentifier) != user.Id)
+                        {
+                            var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+
+                            if (roles.Contains("creator"))
+                            {
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            }
+                            if (!roles.Contains("creator") && roles.Contains("admin"))
+                            {
+                                var rolesArray = getRoles(user);
+                                if (!rolesArray.Result.Contains("creator") && !rolesArray.Result.Contains("admin"))
+                                {
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Delete
+                                    </button>
+                                }
+                            }
+                            if (!roles.Contains("creator") && !roles.Contains("admin") && roles.Contains("moderator"))
+                            {
+                                var rolesArray = getRoles(user);
+                                if (!rolesArray.Result.Contains("creator") && !rolesArray.Result.Contains("moderator") && !rolesArray.Result.Contains("admin"))
+                                {
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Delete
+                                    </button>
+                                }
+                            }
+                        }
+
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <table class="table">
+        <tr><th>Email</th><th>Nick</th><th></th></tr>
+        @foreach (var user in Model)
+        {
+            @if (User.FindFirstValue(ClaimTypes.NameIdentifier) == user.Id)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.Nick</td>
+
+                    <td>
+                        <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@user.Id">Edit</a>
+                        <a class="btn btn-sm btn-primary" asp-action="ChangePassword" asp-route-id="@user.Id">Change password</a>
+                    </td>
+                </tr>
+                break;
+            }
+        }
+    </table>
+}
+
+
+@functions{
+    async Task<List<string>> getRoles(User user)
+    {
+        UserManager<User> userManager = ViewBag.UserManager;
+        var roles = await userManager.GetRolesAsync(user);
+        return roles.ToList();
+    }
+}
+

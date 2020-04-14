@@ -1,0 +1,146 @@
+﻿@model PaginatedList<Lab1.Models.Product>
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Product";
+}
+
+<h1>Products in Subcategory: @ViewBag.SubcategoryName</h1>
+
+@if (User.Identity.IsAuthenticated)
+{
+    var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+    if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+    {
+        <p>
+            @Html.ActionLink("Create new", "Create", new { subcategoryId = @ViewBag.SubcategoryId }) |
+            @Html.ActionLink("Back to list", "Index", "Subcategories", new { id = @ViewBag.CategoryId, name = @ViewBag.CategoryName })
+        </p>
+    }
+    else
+    {
+        @Html.ActionLink("Back to list", "Index", "Subcategories", new { id = @ViewBag.CategoryId, name = @ViewBag.CategoryName })
+    }
+}
+else
+{
+    @Html.ActionLink("Back to list", "Index", "Subcategories", new { id = @ViewBag.CategoryId, name = @ViewBag.CategoryName })
+}
+
+
+<form asp-action="Index" asp-route-id="@ViewBag.SubcategoryId" asp-route-name="@ViewBag.SubcategoryName" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-primary" />
+            <a asp-action="Index" asp-route-id="@ViewBag.SubcategoryId" asp-route-name="@ViewBag.SubcategoryName">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-id="@ViewBag.SubcategoryId"
+                   asp-route-name="@ViewBag.SubcategoryName"
+                   asp-route-sortOrder="@ViewData["NameSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
+            </th>
+            <th>
+                Info
+            </th>
+            <th>
+                Specification
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-id="@ViewBag.SubcategoryId"
+                   asp-route-name="@ViewBag.SubcategoryName"
+                   asp-route-sortOrder="@ViewData["RatingSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]">Rating</a>
+            </th>
+            <th>
+                Subcategory
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Info)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Specification)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subcategory.Name)
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                        if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+                        {
+                            <p>
+                                <a asp-action="Edit" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Details</a> |
+                                <a asp-action="ViewComments" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Comments</a> |
+                                <a asp-action="ViewReviews" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Reviews</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Delete</a>
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                <a asp-action="Details" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Details</a> |
+                                <a asp-action="ViewComments" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Comments</a> |
+                                <a asp-action="ViewReviews" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Reviews</a>
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                       <p>
+                            <a asp-action="Details" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Details</a> |
+                            <a asp-action="ViewComments" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Comments</a> |
+                            <a asp-action="ViewReviews" asp-route-id="@item.Id" asp-route-num="0" asp-route-searchString="@ViewBag.SearchString">Reviews</a>
+                        </p>
+                    }
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-id="@ViewBag.SubcategoryId"
+   asp-route-name="@ViewBag.SubcategoryName"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-id="@ViewBag.SubcategoryId"
+   asp-route-name="@ViewBag.SubcategoryName"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

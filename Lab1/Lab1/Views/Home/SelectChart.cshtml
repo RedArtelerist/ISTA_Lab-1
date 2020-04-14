@@ -1,0 +1,17 @@
+﻿@{
+
+    ViewBag.Title = "Chart Select";
+
+}
+
+<form asp-action="About" asp-route-button="@ViewBag.Button" asp-controller="Home" asp-antiforgery="true">
+    <fieldset>
+        Chart Type
+
+        @Html.DropDownList("ChartType")
+
+        <p>
+            <input type="submit" value="Submit" />
+        </p>
+    </fieldset>
+</form>

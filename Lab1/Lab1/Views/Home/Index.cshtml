@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Hotline</h1>
+</div>
+
+<div class="search-line cell-sm">
+
+    <label class="hidden" for="toggle-1">Пошук</label>
+    <input id="toggle-1" class="hidden" type="checkbox">
+
+    <form method="get" asp-controller="Products" asp-action="Index1">
+        <input id="searchbox" class="field" name="SearchString" type="text" placeholder="... find product" data-default="... find product" maxlength="100" autocomplete="off">
+            <div class="ui-menu-wrapper" id="live-search">
+                <ul id="ui-id-1" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul>
+            </div>
+        <div class="input-search getmdl">
+            <input id="doSearch" type="submit" value="Поиск">
+        </div>
+
+    </form>
+</div>
+
+<div class="row">
+    <h2>Welcome to Hotline</h2>
+    <p>
+        hotline.ua – сервіс вибору товарів та пропозицій інтернет-магазинів.
+
+        Тут ви підберете потрібний товар, порівняєте ціни на нього та вирішите, в якому інтернет-магазині здійснити покупку.
+
+        Вашими головними помічниками у виборі товару будуть розумні фільтри та гіди покупця.
+
+        Також вам допоможуть відгуки реальних покупців про товари та магазини і різноманітні можливості сортування та відбору пропозицій.
+
+        За допомогою сервісу Hotline Checkout можна оплатити товар карткою прямо на hotline.ua. Гроші будуть заблоковані на вашому рахунку та спишуться тільки після отримання замовлення від інтернет-магазина, пропозицію якого ви вибрали.
+
+        Зареєструйтесь на hotline.ua та отримуйте бонуси, створюйте списки покупок, беріть участь в активностях наших партнерів.
+
+        Бажаємо приємного інтернет-шопінгу та вигідних покупок!
+    </p>
+</div>

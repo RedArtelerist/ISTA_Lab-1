@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Lab1.Models.Category>
+@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<h1>Categories</h1>
+@if (User.Identity.IsAuthenticated)
+{
+    var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+    if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+    {
+        <p>
+            <a asp-action="Create">Create New</a> |
+            @Html.ActionLink("Home", "Index", "Home")
+        </p>
+    }
+    else
+    {
+        @Html.ActionLink("Home", "Index", "Home")
+    }
+}
+else
+{
+    <p>
+        @Html.ActionLink("Home", "Index", "Home")
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var roles = ((ClaimsIdentity)User.Identity).Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+                        if (roles.Contains("creator") || roles.Contains("moderator") || roles.Contains("admin"))
+                        {
+                            <p>
+                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id">Subcategories</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </p>
+                        }
+                        else
+                        {
+                            <a asp-action="Details" asp-route-id="@item.Id">Subcategories</a>
+                        }
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id">Subcategories</a>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*<div class="container">
+        <div id="chart1"></div>
+    </div>
+
+    @section scripts{
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script>
+            google.charts.load('current', { 'packages': ['corechart'] });
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                $.get('/api/Charts/JsonData', function (jsonData) {
+                    data = google.visualization.arrayToDataTable(jsonData, false);
+                    var option = {
+                        title: "The сorrelation of the number of subcategories and categories",
+                        width: 500,
+                        height: 400
+                    };
+
+                    chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                    chart.draw(data, option);
+                })
+            }
+        </script>
+    }*@

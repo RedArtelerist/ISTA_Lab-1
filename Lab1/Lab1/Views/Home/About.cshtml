@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "About";
+}
+
+<h1>About</h1>
+
+<h3>On site @ViewBag.ProductCount Products</h3>
+<h3>On site @ViewBag.SellerCount Sellers</h3>
+
+@*<input type="submit" value="The сorrelation of the number of subcategories and categories" id="btnClick1" />
+    <input type="submit" value="The сorrelation of the number of products and subcategories" id="btnClick2" />*@
+
+<form>
+    <button name="button" value="first" asp-action="SelectChart">First</button>
+    <button name="button" value="second" asp-action="SelectChart">Second</button>
+</form>
+
+
+<div class="container">
+    <div id="chart1"></div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'] });
+
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            if (@ViewBag.Button == '1') {
+
+                $.getJSON('/api/Charts/JsonData', function (jsonData) {
+                    data = google.visualization.arrayToDataTable(jsonData, false);
+                    var option = {
+                        title: "The сorrelation of the number of subcategories and categories",
+                        width: 800,
+                        height: 500
+                    };
+
+                    if (@ViewBag.Chart == "0")
+                        chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "1")
+                        chart = new google.visualization.BarChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "2")
+                        chart = new google.visualization.ColumnChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "3")
+                        chart = new google.visualization.LineChart(document.getElementById('chart1'));
+
+                    chart.draw(data, option);
+                })
+            }
+            else if (@ViewBag.Button == '2') {
+                 $.getJSON('/api/Charts/JsonData2', function (jsonData2) {
+                    data = google.visualization.arrayToDataTable(jsonData2, false);
+                    var option = {
+                        title: "The сorrelation of the number of products and subcategories",
+                        width: 600,
+                        height: 400
+                    };
+
+                     if (@ViewBag.Chart == "0")
+                        chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "1")
+                        chart = new google.visualization.BarChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "2")
+                        chart = new google.visualization.ColumnChart(document.getElementById('chart1'));
+                    if (@ViewBag.Chart == "3")
+                         chart = new google.visualization.LineChart(document.getElementById('chart1'));
+
+                    chart.draw(data, option);
+                })
+            }
+        }
+    </script>
+}

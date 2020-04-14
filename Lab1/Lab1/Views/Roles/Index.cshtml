@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+
+<h2>List of roles</h2>
+<table class="table">
+    @foreach (var role in Model)
+    {
+        if (role.Name != "creator")
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        List<string> roles = ViewBag.UserRoles;
+                        if(roles.Contains("creator"))
+                        {
+                            <form asp-action="Delete" asp-route-id="@role.Id" method="post">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    }
+</table>
+@if (User.Identity.IsAuthenticated) 
+{
+    List<string> roles = ViewBag.UserRoles;
+    if(roles.Contains("creator"))
+    { 
+        <a asp-action="Create">Add role</a>
+    }
+    
+}
+<a asp-action="UserList">List of users</a> |
+<a asp-controller="Home" asp-action="Index">Back</a>
